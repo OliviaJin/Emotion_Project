@@ -11,10 +11,10 @@
 <body>
     <script type="module">
         import * as THREE from 'https://cdn.skypack.dev/three@0.129.0/build/three.module.js';
-        import { OrbitControls } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js';
         import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js';
 
-        let scene, camera, renderer, model;
+        let scene, camera, renderer;
+        let models = {};
 
         function init() {
             scene = new THREE.Scene();
@@ -24,9 +24,23 @@
             document.body.appendChild(renderer.domElement);
 
             const loader = new GLTFLoader();
+
+            // Load the first model
             loader.load('Emotion.glb', (gltf) => {
-                model = gltf.scene;
-                scene.add(model);
+                models.model1 = gltf.scene;
+                scene.add(models.model1);
+            });
+
+            // Load the second model
+            loader.load('Emotion2.glb', (gltf) => {
+                models.model2 = gltf.scene;
+                scene.add(models.model2);
+            });
+
+            // Load the third model
+            loader.load('Emotion3.glb', (gltf) => {
+                models.model3 = gltf.scene;
+                scene.add(models.model3);
             });
 
             const light = new THREE.PointLight(0xFFFFFF, 1);
@@ -41,9 +55,12 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            if (model) {
-                model.rotation.x += 0.01;
-                model.rotation.y += 0.01;
+            // Rotate the models if they are loaded
+            for (const model of Object.values(models)) {
+                if (model) {
+                    model.rotation.x += 0.01;
+                    model.rotation.y += 0.01;
+                }
             }
 
             renderer.render(scene, camera);
