@@ -25,45 +25,43 @@
 
             const loader = new GLTFLoader();
 
-            // Load and add models to the scene
-            ['Emotion.glb', 'Emotion2.glb', 'Emotion3.glb'].forEach((modelPath, index) => {
-                loader.load(modelPath, (gltf) => {
-                    const model = gltf.scene;
-                    model.scale.set(0.2, 0.2, 0.2); // Scale down the model
-                    models[modelPath] = model;
-                    createModelGrid(modelPath);
-                });
+            // Load the first model
+            loader.load('Emotion2.glb', (gltf) => {
+                models.model1 = gltf.scene;
+                scene.add(models.model1);
+            });
+
+            // Load the second model
+            loader.load('Emotion.glb', (gltf) => {
+                models.model2 = gltf.scene;
+                scene.add(models.model2);
+            });
+
+            // Load the third model
+            loader.load('Emotion3.glb', (gltf) => {
+                models.model3 = gltf.scene;
+                scene.add(models.model3);
             });
 
             const light = new THREE.PointLight(0xFFFFFF, 1);
             light.position.set(5, 5, 5);
             scene.add(light);
 
-            camera.position.z = 10;
+            camera.position.z = 5;
 
             animate();
-        }
-
-        function createModelGrid(modelPath) {
-            const spacing = 1.5; // Space between each model
-            const count = 5; // Number of models in one row/column
-            for (let i = -count; i <= count; i++) {
-                for (let j = -count; j <= count; j++) {
-                    const modelInstance = models[modelPath].clone();
-                    modelInstance.position.set(i * spacing, j * spacing, 0);
-                    scene.add(modelInstance);
-                }
-            }
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            // Rotate the models
-            Object.values(models).forEach(model => {
-                model.rotation.x += 0.01;
-                model.rotation.y += 0.01;
-            });
+            // Rotate the models if they are loaded
+            for (const model of Object.values(models)) {
+                if (model) {
+                    model.rotation.x += 0.01;
+                    model.rotation.y += 0.01;
+                }
+            }
 
             renderer.render(scene, camera);
         }
